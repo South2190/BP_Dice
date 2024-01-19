@@ -3,3 +3,6 @@
 
 # BotのTOKENが記載されたファイルを無視
 BP_Dice_resource.py
+
+# pycacheを無視
+__pycache__/
