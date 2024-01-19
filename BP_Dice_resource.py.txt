@@ -1,3 +1,2 @@
-# botのTOKENおよびbotを利用したいサーバーのIDを記述し、語尾の.txtを外して保存してください。
+# botのTOKENを記述し、語尾の.txtを外して保存してください。
 DiscordBotToken = ''
-ServerID = ''
