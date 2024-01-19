@@ -1,4 +1,4 @@
-# BLUEPROTOCOL_DiceBot
+# [BLUEPROTOCOL_DiceBot](https://github.com/South2190/BP_Dice)
 
 ブループロトコルのゲーム内チャットで利用できるコマンド`/dice`をDiscordでも利用できるようにするBotです。Application Commands対応。
 
