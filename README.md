@@ -6,4 +6,4 @@
 Botアカウントは作ってないので各自で用意してください。
 
 > [!important]
-> このBotが利用しているライブラリは**discord.py**ではなく**pycode**です。
+> このBotが利用しているライブラリは**discord.py**ではなく**pycord**です。
