@@ -1,4 +1,5 @@
 import discord
+import BP_Dice_resource
 
 bot = discord.Bot()
 
@@ -7,4 +8,4 @@ async def aping(ctx):
 	print("catch aping")
 	await ctx.respond('apong')
 
-bot.run('ODg5ODU3NDE3MjAwOTM0OTEz.GoxEVi.ChmCCDUCiFKNsw-ZQPtOMq9Kp5K9X0pfSPZ33c')
+bot.run(BP_Dice_resource.DiscordBotToken)

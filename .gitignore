@@ -1,0 +1,5 @@
+# macで生成されるファイルを無視
+.DS_Store
+
+# BotのTOKENが記載されたファイルを無視
+BP_Dice_resource.py
