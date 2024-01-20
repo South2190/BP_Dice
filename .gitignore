@@ -1,8 +1,7 @@
-# macで生成されるファイルを無視
+# macで生成されるファイル
 .DS_Store
 
-# BotのTOKENが記載されたファイルを無視
+# BotのTOKENが記載されたファイル
 BP_Dice_resource.py
 
-# pycacheを無視
 __pycache__/
