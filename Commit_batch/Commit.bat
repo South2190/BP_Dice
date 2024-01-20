@@ -9,8 +9,10 @@ git commit -a
 set /p yn = masterƒuƒ‰ƒ“ƒ`‚Öpush‚µ‚Ü‚·‚©?(y/n)^>
 if '%yn%' == 'y' (
 	git push origin master
-) else if not '%yn%' == 'n' (
-	goto confirmation
+	pause
+	goto :eof
+) else if '%yn%' == 'n' (
+	pause
+	goto :eof
 )
-pause
-goto :eof
+goto confirmation
