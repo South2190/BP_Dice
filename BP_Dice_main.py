@@ -2,11 +2,13 @@ import discord
 import json
 import os
 import random
+from logging import getLogger, config
 
-import BP_Dice_resource
+import BP_Dice_token
 
 bot = discord.Bot()
 
+# ウインドウタイトルの設定
 def title(text):
     # OSの種類を判別する
     # Windows
@@ -15,6 +17,8 @@ def title(text):
     # Mac / Linux
 	elif os.name == 'posix':
 		print(f'\x1b]2;{text}\x07', end='', flush=True)
+
+# 
 
 @bot.event
 async def on_ready():
@@ -32,4 +36,4 @@ print("****************************************")
 print("BP_Dice")
 print("CommitDate:{}".format(settings['CommitDate']))
 print("****************************************")
-bot.run(BP_Dice_resource.DiscordBotToken)
+bot.run(BP_Dice_token.DiscordBotToken)

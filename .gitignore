@@ -2,6 +2,6 @@
 .DS_Store
 
 # BotのTOKENが記載されたファイル
-BP_Dice_resource.py
+BP_Dice_token.py
 
 __pycache__/

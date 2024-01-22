@@ -6,13 +6,12 @@ git add .
 git commit -a
 
 :confirmation
-set /p yn = masterブランチへpushしますか?(y/n)^>
+set yn = nul
+set /p yn="masterブランチへpushしますか?(y/n)>"
 if '%yn%' == 'y' (
 	git push origin master
-	pause
-	goto :eof
-) else if '%yn%' == 'n' (
-	pause
-	goto :eof
+) else if not '%yn%' == 'n' (
+	goto confirmation
 )
-goto confirmation
+pause
+goto :eof
