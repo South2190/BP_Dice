@@ -1,9 +1,7 @@
 {
-    "CommitDate": "2024-01-20",
+    "CommitDate": "2024-01-22",
     "LoggerConfig": {
         "version": 1,
-        "formatters": {
-            
-        }
+        "formatters": {}
     }
 }
