@@ -1,0 +1,5 @@
+# テキストファイルは自動変換
+*	text=auto
+
+# バッチファイルはCRLFを強制する
+*.bat	text eol=crlf

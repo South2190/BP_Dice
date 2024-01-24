@@ -1,7 +1,44 @@
 {
-    "CommitDate": "2024-01-22",
-    "LoggerConfig": {
+    "CommitDate": "2024-01-24",
+    "LoggingDirectoryName": "log",
+    "LoggingConfigulation": {
         "version": 1,
-        "formatters": {}
+        "formatters": {
+            "console_fmt": {
+                "format": "[ {levelname:^8} ] {message}",
+                "style": "{"
+            },
+            "file_fmt": {
+                "format": "{asctime} line:{lineno:03} {funcName:<8} [ {levelname:^8} ] {message}",
+                "datefmt": "%Y-%m-%d %H:%M:%S",
+                "style": "{"
+            }
+        },
+        "handlers": {
+            "console": {
+                "class": "logging.StreamHandler",
+                "level": "INFO",
+                "formatter": "console_fmt",
+                "stream": "ext://sys.stdout"
+            },
+            "file": {
+                "class": "logging.FileHandler",
+                "level": "DEBUG",
+                "formatter": "file_fmt"
+            }
+        },
+        "loggers": {
+            "__main__": {
+                "level": "DEBUG",
+                "propagate": "no",
+                "handlers": [
+                    "console",
+                    "file"
+                ]
+            }
+        },
+        "root": {
+            "level": "DEBUG"
+        }
     }
 }

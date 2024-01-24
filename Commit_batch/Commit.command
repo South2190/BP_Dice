@@ -20,4 +20,5 @@ elif [ ${Slt} = "n" ]; then
 fi
 done
 
+echo "完了しました"
 read

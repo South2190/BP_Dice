@@ -4,4 +4,7 @@
 # BotのTOKENが記載されたファイル
 BP_Dice_token.py
 
+# Botが生成したログファイルを格納するディレクトリ
+log/
+
 __pycache__/

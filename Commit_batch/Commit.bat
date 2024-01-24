@@ -8,12 +8,12 @@ git add .
 git commit -a
 
 :confirmation
-set /p yn="masterブランチへpushしますか?(y/n)>"
-if '%yn%' == 'y' (
+set /p Slt="masterブランチへpushしますか?(y/n)>"
+if '%Slt%' == 'y' (
 	git push origin master
-) else if not '%yn%' == 'n' (
+) else if not '%Slt%' == 'n' (
 	goto confirmation
 )
 
+echo "完了しました"
 pause
-goto :eof
