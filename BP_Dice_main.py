@@ -20,21 +20,19 @@ def title(text):
 	elif os.name == 'posix':
 		print(f'\x1b]2;{text}\x07', end='', flush=True)
 
+# Bot起動時の処理
 @bot.event
 async def on_ready():
 	await bot.change_presence(activity=discord.Game(name="/dice"))
 	LOG.info("Botの起動が完了しました")
 
+# diceコマンドの定義
 @bot.slash_command(description="ダイスを振ります（範囲：0～999）")
 async def dice(ctx):
 	dicenum = random.randint(0, 999)
 	await ctx.respond("ダイス！【{}】".format(dicenum))
 	men = await bot.fetch_user(ctx.author.id)
 	LOG.debug("{} rolled the dice -> {}".format(men, dicenum))
-
-@bot.event
-async def on_error():
-	LOG.exception("例外が発生しました")
 
 # 設定ファイルのオープン
 with open('settings.json', 'r') as f:
@@ -45,11 +43,11 @@ titletext = "BP_Dice CommitDate:" + settings['CommitDate']
 title(titletext)
 
 # ログファイル出力先のディレクトリが存在しない場合作成する
-if os.path.isdir(settings['LoggingDirectoryName']) == False:
-	os.mkdir(settings['LoggingDirectoryName'])
+if os.path.isdir('log') == False:
+	os.mkdir('log')
 
 # ログファイル名の設定
-logfilepath = settings['LoggingDirectoryName'] + "/" + datetime.date.today().strftime('%Y-%m-%d') + ".log"
+logfilepath = "log/" + datetime.date.today().strftime('%Y-%m-%d') + ".log"
 settings["LoggingConfigulation"]["handlers"]["file"]["filename"] = logfilepath
 
 config.dictConfig(settings["LoggingConfigulation"])
