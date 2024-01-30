@@ -1,5 +1,6 @@
 import datetime
 import discord
+from discord import Option
 import json
 import os
 import platform
@@ -33,6 +34,31 @@ async def dice(ctx):
 	await ctx.respond("ダイス！【{}】".format(dicenum))
 	men = await bot.fetch_user(ctx.author.id)
 	LOG.debug("{} rolled the dice -> {}".format(men, dicenum))
+
+# cpcalcコマンドの定義
+@bot.slash_command(guild_ids=[889855802054156288], description="コネクトクーポンの残り有効期限から日付を計算します")
+async def cpcalc(
+	ctx: discord.ApplicationContext,
+	day: Option(int, description="残り日数"),
+	hour: Option(int, description="残り時間数", required=False, default=0),
+	minute: Option(int, description="残り分数", required=False, default=0)
+):
+	nowdate = datetime.datetime.now()
+	calcresult = nowdate + datetime.timedelta(days=day, hours=hour, minutes=minute)
+	if all([hour == 0, minute == 0]):
+		resultfmt = '%m/%d'
+	elif minute == 0:
+		resultfmt = '%m/%d %H:00'
+	else:
+		resultfmt = '%m/%d %H:%M'
+	await ctx.respond("`{}まで`".format(calcresult.strftime(resultfmt)), ephemeral=True)
+	men = await bot.fetch_user(ctx.author.id)
+	LOG.debug("{} calculated the date. nowdate:{} + (day:{}, hour:{}, minute:{}) -> {}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt)))
+
+@bot.event
+async def on_command_error(ctx, error):
+	#await ctx.send(discord.Embed(title="エラーが発生しました", description="エラーです。"))
+	LOG.exception("エラーが発生しました")
 
 # 設定ファイルのオープン
 with open('settings.json', 'r') as f:
