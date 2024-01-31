@@ -36,7 +36,7 @@ async def dice(ctx):
 	LOG.debug("{} rolled the dice -> {}".format(men, dicenum))
 
 # cpcalcコマンドの定義
-@bot.slash_command(guild_ids=[889855802054156288], description="コネクトクーポンの残り有効期限から日付を計算します")
+@bot.slash_command(description="コネクトクーポンの残り有効期限から日付を計算します")
 async def cpcalc(
 	ctx: discord.ApplicationContext,
 	day: Option(int, description="残り日数"),
