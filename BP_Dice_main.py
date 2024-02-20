@@ -5,6 +5,7 @@ import json
 import os
 import platform
 import random
+import time
 from logging import getLogger, config
 
 import BP_Dice_token
@@ -51,9 +52,11 @@ async def cpcalc(
 		resultfmt = '%m/%d %H:00'
 	else:
 		resultfmt = '%m/%d %H:%M'
-	await ctx.respond("`{}まで`".format(calcresult.strftime(resultfmt)), ephemeral=True)
+	calcepoc = int(time.mktime(calcresult.timetuple()))
+	restext = "`{rdate}まで( <t:{repoc}:R> )`\n\n**Preview**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
+	await ctx.respond(restext, ephemeral=True)
 	men = await bot.fetch_user(ctx.author.id)
-	LOG.debug("{} calculated the date. nowdate:{} + (day:{}, hour:{}, minute:{}) -> {}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt)))
+	LOG.debug("{} calculated the date. nowdate:{} + (day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt), calcepoc))
 
 @bot.event
 async def on_command_error(ctx, error):
