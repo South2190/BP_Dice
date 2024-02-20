@@ -57,7 +57,6 @@ async def cpcalc(
 
 @bot.event
 async def on_command_error(ctx, error):
-	#await ctx.send(discord.Embed(title="エラーが発生しました", description="エラーです。"))
 	LOG.exception("エラーが発生しました")
 
 # 設定ファイルのオープン
