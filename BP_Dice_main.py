@@ -53,10 +53,10 @@ async def cpcalc(
 	else:
 		resultfmt = '%m/%d %H:%M'
 	calcepoc = int(time.mktime(calcresult.timetuple()))
-	restext = "`{rdate}まで( <t:{repoc}:R> )`\n\n**Preview**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
+	restext = "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**Preview**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
 	await ctx.respond(restext, ephemeral=True)
 	men = await bot.fetch_user(ctx.author.id)
-	LOG.debug("{} calculated the date. nowdate:{} + (day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt), calcepoc))
+	LOG.debug("{} calculated the date. now:{} + (day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt), calcepoc))
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -67,7 +67,7 @@ with open('settings.json', 'r') as f:
 	settings = json.load(f)
 
 # タイトルの設定
-titletext = "BP_Dice CommitDate:" + settings['CommitDate']
+titletext = "BP_Dice CommitDate:{}".format(settings['CommitDate'])
 title(titletext)
 
 # ログファイル出力先のディレクトリが存在しない場合作成する
@@ -75,7 +75,7 @@ if os.path.isdir('log') == False:
 	os.mkdir('log')
 
 # ログファイル名の設定
-logfilepath = "log/" + datetime.date.today().strftime('%Y-%m-%d') + ".log"
+logfilepath = "log/{}.log".format(datetime.date.today().strftime('%Y-%m-%d'))
 settings["LoggingConfigulation"]["handlers"]["file"]["filename"] = logfilepath
 
 config.dictConfig(settings["LoggingConfigulation"])
