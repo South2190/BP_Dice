@@ -9,11 +9,13 @@ git pull origin %Branch%
 :createtag
 set /p Slt="tag‚ðì¬‚µ‚Ü‚·‚©?(y/n)>"
 if '%Slt%' == 'y' (
+	setlocal enabledelayedexpansion
 	call:setversion
-	python Commit_batch/rewrite_json.py tag %Ver%
+	python Commit_batch/rewrite_json.py tag !Ver!
 ) else if '%Slt%' == 'n' (
 	python Commit_batch/rewrite_json.py
 ) else goto createtag
+pause
 git add .
 git commit -a
 goto confirmation
@@ -21,6 +23,7 @@ goto confirmation
 :setversion
 set /p Ver="ƒo[ƒWƒ‡ƒ“‚ð“ü—Í>"
 if not defined Ver goto setversion
+exit /b
 
 :confirmation
 set Slt=
@@ -32,8 +35,9 @@ if '%Slt%' == 'y' (
 )
 
 if defined Ver (
-	git tag -a %Ver%
-	git push origin %Ver%
+	git tag -a !Ver!
+	git push origin !Ver!
+	endlocal
 )
 
 echo Š®—¹‚µ‚Ü‚µ‚½

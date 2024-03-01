@@ -1,6 +1,6 @@
 {
-    "Version": "1.1.0",
-    "CommitDate": "2024-02-27",
+    "Version": "1.0.0",
+    "CommitDate": "2024-03-01",
     "LoggingConfigulation": {
         "version": 1,
         "formatters": {
