@@ -13,10 +13,10 @@ with open('settings.json', 'r') as f:
 settings['CommitDate'] = datetime.date.today().strftime('%Y-%m-%d')
 
 Slt = ""
+Ver = ""
 while(not Slt):
 	Slt = input("tagを作成しますか?(y/n)>")
 if Slt == 'y':
-	Ver = ""
 	while(not Ver):
 		Ver = input("バージョンを入力>")
 		settings['Version'] = Ver
