@@ -45,23 +45,27 @@ async def cpcalc(
 	minute: Option(int, description="残り分数", required=False, default=0)
 ):
 	nowdate = datetime.datetime.now()
-	# 引数の指定が無い場合は自動的に30日後の4時で計算する
+	# 引数の指定が無い場合は自動的に30日後の翌4時で計算する
 	if all([day == 0, hour == 0, minute == 0]):
-		work = nowdate + datetime.timedelta(days=30)
+		work = nowdate + datetime.timedelta(days=31) if nowdate.hour >= 4 else nowdate + datetime.timedelta(days=30)
 		calcresult = datetime.datetime(work.year, work.month, work.day, 4)
+		resultfmt = '%m/%d %H:%M'
 	else:
 		work = nowdate + datetime.timedelta(days=day, hours=hour, minutes=minute)
 		if all([hour == 0, minute == 0]):
-			calcresult = datetime.datetime(work.year, work.month, work.day, 4)
+			calcresult = datetime.datetime(work.year, work.month, work.day)
+			resultfmt = '%m/%d'
 		elif minute == 0:
 			calcresult = datetime.datetime(work.year, work.month, work.day, work.hour)
+			resultfmt = '%m/%d %H:00'
 		else:
 			calcresult = work
+			resultfmt = '%m/%d %H:%M'
 	calcepoc = int(time.mktime(calcresult.timetuple()))
-	restext = "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**Preview**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime('%m/%d %H:%M'), repoc = calcepoc)
+	restext = "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**Preview**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
 	await ctx.respond(restext, ephemeral=True)
 	men = await bot.fetch_user(ctx.author.id)
-	LOG.debug("{} calculated the date. now:{} + (day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime('%m/%d %H:%M'), calcepoc))
+	LOG.debug("{} calculated the date. now:{} + (day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt), calcepoc))
 
 @bot.event
 async def on_command_error(ctx, error):
