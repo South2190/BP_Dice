@@ -25,6 +25,7 @@ with open('settings.json', 'w') as f:
 	json.dump(settings, f, indent = 4)
 
 os.system("git add .")
+print("コミットメッセージを入力してください . . .")
 os.system("git commit -a")
 
 Slt = ""
@@ -34,5 +35,6 @@ if Slt == 'y':
 	os.system("git push origin {}".format(branch))
 
 if Ver:
+	print("タグメッセージを入力してください . . .")
 	os.system("git tag -a {}".format(Ver))
 	os.system("git push origin {}".format(Ver))

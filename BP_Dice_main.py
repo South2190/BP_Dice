@@ -25,7 +25,7 @@ def title(text):
 # Bot起動時の処理
 @bot.event
 async def on_ready():
-	await bot.change_presence(activity=discord.Game(name="/dice"))
+	await bot.change_presence(activity=discord.Game(name="/dice /cpcalc"))
 	LOG.info("Botの起動が完了しました")
 
 # diceコマンドの定義
@@ -45,11 +45,14 @@ async def cpcalc(
 	minute: Option(int, description="残り分数", required=False, default=0)
 ):
 	nowdate = datetime.datetime.now()
+	restext = ""
+	resultfmt = '%m/%d %H:%M'
 	# 引数の指定が無い場合は自動的に30日後の翌4時で計算する
 	if all([day == 0, hour == 0, minute == 0]):
 		work = nowdate + datetime.timedelta(days=31) if nowdate.hour >= 4 else nowdate + datetime.timedelta(days=30)
 		calcresult = datetime.datetime(work.year, work.month, work.day, 4)
-		resultfmt = '%m/%d %H:%M'
+		timeleft = calcresult - nowdate
+		restext = "**__ℹ️NOTICE__**\n引数として**day:**`{}`, **hour:**`{}`, **minute:**`{}`を自動代入しました\n".format(timeleft.days, int(timeleft.seconds / 3600), int(timeleft.seconds / 60 % 60))
 	else:
 		work = nowdate + datetime.timedelta(days=day, hours=hour, minutes=minute)
 		if all([hour == 0, minute == 0]):
@@ -60,12 +63,13 @@ async def cpcalc(
 			resultfmt = '%m/%d %H:00'
 		else:
 			calcresult = work
-			resultfmt = '%m/%d %H:%M'
 	calcepoc = int(time.mktime(calcresult.timetuple()))
-	restext = "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**Preview**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
+
+	restext += "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**__Preview__**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
 	await ctx.respond(restext, ephemeral=True)
+
 	men = await bot.fetch_user(ctx.author.id)
-	LOG.debug("{} calculated the date. now:{} + (day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt), calcepoc))
+	LOG.debug("{} calculated the date. now:{} + arg:(day:{}, hour:{}, minute:{}) -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, calcresult.strftime(resultfmt), calcepoc))
 
 @bot.event
 async def on_command_error(ctx, error):
@@ -76,7 +80,7 @@ with open('settings.json', 'r') as f:
 	settings = json.load(f)
 
 # タイトルの設定
-titletext = "BP_Dice CommitDate:{}".format(settings['CommitDate'])
+titletext = "BP_Dice Version:{} CommitDate:{}".format(settings['Version'], settings['CommitDate'])
 title(titletext)
 
 # ログファイル出力先のディレクトリが存在しない場合作成する
@@ -90,12 +94,12 @@ settings["LoggingConfigulation"]["handlers"]["file"]["filename"] = logfilepath
 config.dictConfig(settings["LoggingConfigulation"])
 LOG = getLogger(__name__)
 
-LOG.info("****************************************")
+LOG.info("*********************************************")
 LOG.info(titletext)
 LOG.debug("")
 LOG.debug("version info:")
 LOG.debug("python -> {}".format(platform.python_version()))
 LOG.debug("pycord -> {}".format(discord.__version__))
-LOG.info("****************************************")
+LOG.info("*********************************************")
 
 bot.run(BP_Dice_token.DiscordBotToken)
