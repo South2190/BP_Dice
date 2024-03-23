@@ -28,6 +28,15 @@ async def on_ready():
 	await bot.change_presence(activity=discord.Game(name="/dice /cpcalc"))
 	LOG.info("Botの起動が完了しました")
 
+# コマンドでエラーが発生した場合の処理
+@bot.event
+async def on_application_command_error(ctx, error):
+	# LOG.exceptionがエラーとして認識していない？感じなので無理やり例外を発生させて内容をログファイルに記録する
+	try:
+		raise error
+	except:
+		LOG.exception("エラーが発生しました")
+
 # diceコマンドの定義
 @bot.slash_command(description="ダイスを振ります（範囲：0～999）")
 async def dice(ctx):
@@ -76,10 +85,6 @@ async def cpcalc(
 	# ログへの出力
 	men = await bot.fetch_user(ctx.author.id)
 	LOG.debug("{} calculated the date. now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
-
-@bot.event
-async def on_command_error(ctx, error):
-	LOG.exception("エラーが発生しました")
 
 # 設定ファイルのオープン
 with open('settings.json', 'r') as f:
