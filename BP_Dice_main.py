@@ -42,8 +42,7 @@ async def on_application_command_error(ctx, error):
 async def dice(ctx):
 	dicenum = random.randint(0, 999)
 	await ctx.respond("ダイス！【{}】".format(dicenum))
-	men = await bot.fetch_user(ctx.author.id)
-	LOG.debug("{} rolled the dice -> {}".format(men, dicenum))
+	LOG.debug("rolled the dice -> {}".format(dicenum))
 
 # cpcalcコマンドの定義
 @bot.slash_command(description="コネクトクーポンの残り有効期限から日付を計算します")
@@ -83,8 +82,7 @@ async def cpcalc(
 	restext += "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**__Preview__**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
 	await ctx.respond(restext, ephemeral=True)
 	# ログへの出力
-	men = await bot.fetch_user(ctx.author.id)
-	LOG.debug("{} calculated the date. now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(men, nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
+	LOG.debug("calculated the date now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
 
 # 設定ファイルのオープン
 with open('settings.json', 'r') as f:
