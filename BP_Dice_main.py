@@ -48,14 +48,17 @@ async def dice(ctx):
 @bot.slash_command(description="コネクトクーポンの残り有効期限から日付を計算します")
 async def cpcalc(
 	ctx: discord.ApplicationContext,
+	couponcode: Option(str, description="クーポンコード", required=False, default=None),
 	day: Option(int, description="残り日数", required=False, default=0),
 	hour: Option(int, description="残り時間数", required=False, default=0),
 	minute: Option(int, description="残り分数", required=False, default=0)
 ):
-	nowdate = datetime.datetime.now()
+	gentext = ""
 	restext = ""
-	resultfmt = '%m/%d %H:%M'
 	auto = ""
+	nowdate = datetime.datetime.now()
+	resultfmt = '%m/%d %H:%M'
+
 	# 引数の指定が無い場合は自動的に30日後の翌4時で計算する
 	if all([day == 0, hour == 0, minute == 0]):
 		work = nowdate + datetime.timedelta(days=31) if nowdate.hour >= 4 else nowdate + datetime.timedelta(days=30)
@@ -77,9 +80,18 @@ async def cpcalc(
 			resultfmt = '%m/%d %H:00'
 		else:
 			calcresult = work
-	calcepoc = int(time.mktime(calcresult.timetuple()))
 
-	restext += "```\n{rdate}まで( <t:{repoc}:R> )\n```\n**__Preview__**\n{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
+	# エポック秒の算出
+	calcepoc = int(time.mktime(calcresult.timetuple()))
+	# 生成テキスト設定
+	if couponcode != None:
+		gentext = couponcode + "\n"
+	gentext += "{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
+
+	# 返信の書式設定
+	restext += "```\n{gentext}\n```\n**__Preview__**\n{gentext}".format(gentext = gentext)
+
+	# 送信
 	await ctx.respond(restext, ephemeral=True)
 	# ログへの出力
 	LOG.debug("calculated the date now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
