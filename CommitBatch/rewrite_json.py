@@ -2,12 +2,12 @@ import datetime
 import json
 import os
 
-branch = "dev"
+branch = "master"
 
 os.chdir("..")
 os.system("git pull origin {}".format(branch))
 
-with open('settings.json', 'r') as f:
+with open('settings.json', 'r', encoding = "utf-8") as f:
 	settings = json.load(f)
 
 settings['CommitDate'] = datetime.date.today().strftime('%Y-%m-%d')
@@ -21,8 +21,8 @@ if Slt == 'y':
 		Ver = input("バージョンを入力>")
 		settings['Version'] = Ver
 
-with open('settings.json', 'w') as f:
-	json.dump(settings, f, indent = 4)
+with open('settings.json', 'w', encoding = "utf-8") as f:
+	json.dump(settings, f, indent = 4, ensure_ascii = False)
 
 os.system("git add .")
 print("コミットメッセージを入力してください . . .")

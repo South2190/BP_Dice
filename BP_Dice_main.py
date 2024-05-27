@@ -20,12 +20,12 @@ def title(text):
 		os.system(f'title {text}')
     # Mac / Linux
 	elif os.name == 'posix':
-		print(f'\x1b]2;{text}\x07', end='', flush=True)
+		print(f'\x1b]2;{text}\x07', end = '', flush = True)
 
 # Bot起動時の処理
 @bot.event
 async def on_ready():
-	await bot.change_presence(activity=discord.Game(name="/dice /cpcalc"))
+	await bot.change_presence(activity = discord.Game(name = "/help"))
 	LOG.info("Botの起動が完了しました")
 
 # コマンドでエラーが発生した場合の処理
@@ -37,21 +37,42 @@ async def on_application_command_error(ctx, error):
 	except:
 		LOG.exception("エラーが発生しました")
 
+# helpコマンドの定義
+@bot.slash_command(description = "コマンドの使用方法を表示します")
+async def help(
+	ctx: discord.ApplicationContext,
+	command: Option(str, description = "コマンド名", choices = ["list", "help", "dice", "cpcalc"], required = False, default = "list"),
+	ephemeral: Option(bool, description = "実行結果を他人から見えないようにする（既定値：True）", required = False, default = True)
+):
+	# settings.jsonに記述しているヘルプの文章を読み込む
+	helptext = settings["HelpFormat"][command]
+	embed = discord.Embed(
+		#title = helptext["title"],
+		description = helptext["description"],
+		color = 0x3c88da
+	)
+	#embed.set_image(url = helptext["set_image"])
+	for d in helptext["add_field"]:
+		embed.add_field(name = d, value = helptext["add_field"][d])
+
+	await ctx.respond(embed = embed, ephemeral = ephemeral)
+	LOG.debug("command:{}, ephemeral:{}".format(command, ephemeral))
+
 # diceコマンドの定義
-@bot.slash_command(description="ダイスを振ります（範囲：0～999）")
+@bot.slash_command(description = "ダイスを振ります（範囲：0～999）")
 async def dice(ctx):
 	dicenum = random.randint(0, 999)
 	await ctx.respond("ダイス！【{}】".format(dicenum))
-	LOG.debug("rolled the dice -> {}".format(dicenum))
+	LOG.debug("{}".format(dicenum))
 
 # cpcalcコマンドの定義
-@bot.slash_command(description="コネクトクーポンの残り有効期限から日付を計算します")
+@bot.slash_command(description = "コネクトクーポンの有効期限の日付を計算します")
 async def cpcalc(
 	ctx: discord.ApplicationContext,
-	couponcode: Option(str, description="クーポンコード", required=False, default=None),
-	day: Option(int, description="残り日数", required=False, default=0),
-	hour: Option(int, description="残り時間数", required=False, default=0),
-	minute: Option(int, description="残り分数", required=False, default=0)
+	couponcode: Option(str, description = "クーポンコード", required = False, default = None),
+	day: Option(int, description = "残り日数", required = False, default = 0),
+	hour: Option(int, description = "残り時間数", required = False, default = 0),
+	minute: Option(int, description = "残り分数", required = False, default = 0)
 ):
 	gentext = ""
 	restext = ""
@@ -61,17 +82,17 @@ async def cpcalc(
 
 	# 引数の指定が無い場合は自動的に30日後の翌4時で計算する
 	if all([day == 0, hour == 0, minute == 0]):
-		work = nowdate + datetime.timedelta(days=31) if nowdate.hour >= 4 else nowdate + datetime.timedelta(days=30)
+		work = nowdate + datetime.timedelta(days = 31) if nowdate.hour >= 4 else nowdate + datetime.timedelta(days = 30)
 		calcresult = datetime.datetime(work.year, work.month, work.day, 4)
 		# 差分の計算
 		timeleft = calcresult - nowdate
 		h = int(timeleft.seconds / 3600)
 		m = int(timeleft.seconds / 60 % 60)
-		restext = "ℹ️引数として**day:**`{}`, **hour:**`{}`, **minute:**`{}`を自動代入しました\n".format(timeleft.days, h, m)
+		restext = "ℹ️引数として**day:**`{}`, **hour:**`{}`, **minute:**`{}`を自動で代入しました\n".format(timeleft.days, h, m)
 		auto = " auto:(day:{}, hour:{}, minute:{})".format(timeleft.days, h, m)
 	# 引数が指定された場合
 	else:
-		work = nowdate + datetime.timedelta(days=day, hours=hour, minutes=minute)
+		work = nowdate + datetime.timedelta(days = day, hours = hour, minutes = minute)
 		if all([hour == 0, minute == 0]):
 			calcresult = datetime.datetime(work.year, work.month, work.day)
 			resultfmt = '%m/%d'
@@ -83,6 +104,7 @@ async def cpcalc(
 
 	# エポック秒の算出
 	calcepoc = int(time.mktime(calcresult.timetuple()))
+
 	# 生成テキスト設定
 	if couponcode != None:
 		gentext = couponcode + "\n"
@@ -92,12 +114,12 @@ async def cpcalc(
 	restext += "```\n{gentext}\n```\n**__Preview__**\n{gentext}".format(gentext = gentext)
 
 	# 送信
-	await ctx.respond(restext, ephemeral=True)
+	await ctx.respond(restext, ephemeral = True)
 	# ログへの出力
-	LOG.debug("calculated the date now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
+	LOG.debug("now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
 
 # 設定ファイルのオープン
-with open('settings.json', 'r') as f:
+with open('settings.json', 'r', encoding = "utf-8") as f:
 	settings = json.load(f)
 
 # タイトルの設定
