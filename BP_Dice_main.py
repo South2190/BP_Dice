@@ -51,7 +51,7 @@ async def help(
 		description = helptext["description"],
 		color = 0x3c88da
 	)
-	#embed.set_image(url = helptext["set_image"])
+	embed.set_image(url = helptext["set_image"])
 	for d in helptext["add_field"]:
 		embed.add_field(name = d, value = helptext["add_field"][d])
 
