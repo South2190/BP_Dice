@@ -8,3 +8,6 @@ BP_Dice_token.py
 log/
 
 __pycache__/
+
+# テスターユーザーリスト
+TesterUserList.json
