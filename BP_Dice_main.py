@@ -31,6 +31,21 @@ class AutoCpcalcOption(discord.ui.View):
 		await interaction.delete_original_response()
 """
 
+# コマンド呼び出しボタン
+class CallCommandButton(discord.ui.View):
+	@discord.ui.button(label = "有効期限を計算する", style = discord.ButtonStyle.blurple, emoji = "🎫")
+	async def CpcalcButton(self, button, interaction):
+		await interaction.response.send_modal(CouponCodeModal(title = "クーポンコードを入力"))
+
+# クーポンコードの入力を求めるモーダル
+class CouponCodeModal(discord.ui.Modal):
+	def __init__(self, *args, **kwargs) -> None:
+		super().__init__(*args, **kwargs)
+		self.add_item(discord.ui.InputText(label = "クーポンコード", style = discord.InputTextStyle.short))
+
+	async def callback(self, interaction: discord.Interaction):
+		await interaction.response.send_message(self.children[0].value, ephemeral = True)
+
 # ウインドウタイトルの設定
 def title(text):
     # Windows
@@ -46,6 +61,54 @@ def ChannelListReload():
 	ChannelList = []
 	for item in ServerSettings["GuildIds"].values():
 		ChannelList.append(item["CouponcodeChannel"])
+
+# コネクトクーポンの有効期限を計算
+def CpAutoCalc(cpcode, day, hour, minute):
+	gentext = ""
+	restext = ""
+	auto = ""
+	nowdate = datetime.datetime.now()
+	resultfmt = '%m/%d %H:%M'
+
+	# 引数の指定が無い場合は自動的に30日後の翌4時で計算する
+	if all([day == 0, hour == 0, minute == 0]):
+		if nowdate.hour == 4 and nowdate.minute <= 30:
+			restext = "⚠️ゲーム内ログインボーナス更新直後にコマンドが実行されています。下記の残り有効期限が正しいかどうか確認してください。\n"
+		work = nowdate + datetime.timedelta(days = 31) if nowdate.hour >= 4 else nowdate + datetime.timedelta(days = 30)
+		calcresult = datetime.datetime(work.year, work.month, work.day, 4)
+		# 差分の計算
+		timeleft = calcresult - nowdate
+		h = int(timeleft.seconds / 3600)
+		m = int(timeleft.seconds / 60 % 60)
+		restext += "ℹ️有効期限　残り：`{}`日`{}`時間`{}`分として自動で計算しました。\n".format(timeleft.days, h, m)
+		auto = " auto:(day:{}, hour:{}, minute:{})".format(timeleft.days, h, m)
+	# 引数が指定された場合
+	else:
+		work = nowdate + datetime.timedelta(days = day, hours = hour, minutes = minute)
+		if all([hour == 0, minute == 0]):
+			calcresult = datetime.datetime(work.year, work.month, work.day)
+			resultfmt = '%m/%d'
+		elif minute == 0:
+			calcresult = datetime.datetime(work.year, work.month, work.day, work.hour)
+			resultfmt = '%m/%d %H:00'
+		else:
+			calcresult = work
+
+	# エポック秒の算出
+	calcepoc = int(time.mktime(calcresult.timetuple()))
+
+	# 生成テキスト設定
+	if cpcode != None:
+		#gentext = cpcode + "\n"
+		gentext = f"```\n{cpcode}\n```\n"
+	gentext += "{rdate}まで( <t:{repoc}:R> )".format(rdate = calcresult.strftime(resultfmt), repoc = calcepoc)
+
+	# 返信の書式設定
+	restext += "````\n{gentext}\n````\n**__Preview__**\n{gentext}".format(gentext = gentext)
+
+	return restext
+	# ログへの出力
+	LOG.debug("now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
 
 # Bot起動時の処理
 @bot.event
@@ -109,6 +172,12 @@ async def help(
 	await ctx.respond(embed = embed, ephemeral = ephemeral)
 	LOG.debug(GuildInfoDump(ctx.guild_id) + "command:{}, ephemeral:{}".format(command, ephemeral))
 
+# command_buttonコマンドの定義
+@bot.slash_command(description = "コマンド呼び出しボタンを備えたメッセージを送信します", default_member_permissions = discord.permissions.Permissions(manage_guild = True))
+@discord.guild_only()
+async def command_button(ctx):
+	await ctx.respond("test", view = CallCommandButton())
+
 # diceコマンドの定義
 @bot.slash_command(description = "ダイスを振ります（範囲：0～999）")
 async def dice(ctx):
@@ -125,6 +194,7 @@ async def cpcalc(
 	hour: Option(int, description = "残り時間数", required = False, default = 0),
 	minute: Option(int, description = "残り分数", required = False, default = 0)
 ):
+	"""
 	gentext = ""
 	restext = ""
 	auto = ""
@@ -165,11 +235,14 @@ async def cpcalc(
 
 	# 返信の書式設定
 	restext += "```\n{gentext}\n```\n**__Preview__**\n{gentext}".format(gentext = gentext)
+	"""
+	LOG.debug("")
 
+	text = CpAutoCalc(couponcode, day, hour, minute)
 	# 送信
-	await ctx.respond(restext, ephemeral = True)
+	await ctx.respond(text, ephemeral = True)
 	# ログへの出力
-	LOG.debug(GuildInfoDump(ctx.guild_id) + "now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
+	#LOG.debug(GuildInfoDump(ctx.guild_id) + "now:{} + arg:(day:{}, hour:{}, minute:{}){} -> {}, epoc:{}".format(nowdate.strftime('%m/%d %H:%M'), day, hour, minute, auto, calcresult.strftime(resultfmt), calcepoc))
 
 # コネクトクーポンの有効期限の自動返信先チャンネル設定(サーバー管理者のみ実行可能)
 @bot.slash_command(description = "コネクトクーポンの有効期限の自動返信先チャンネルを指定します", default_member_permissions = discord.permissions.Permissions(manage_guild = True))
