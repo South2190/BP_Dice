@@ -15,26 +15,10 @@ BotSettingsFile = 'settings.json'
 # サーバーIDをログに出力する際のフォーマット
 GuildInfoDump = lambda gid: f"(GuildID:{gid}) "
 
-ChannelList = []
 intents = discord.Intents.default()
 intents.message_content = True
 
 bot = discord.Bot(intents = intents)
-
-# コマンド呼び出しボタン
-class CallCommandButton(discord.ui.View):
-	@discord.ui.button(label = "有効期限を計算する", style = discord.ButtonStyle.blurple, emoji = "🎫")
-	async def CpcalcButton(self, button, interaction):
-		await interaction.response.send_modal(CouponCodeModal(title = "クーポンコードを入力"))
-
-# クーポンコードの入力を求めるモーダル
-class CouponCodeModal(discord.ui.Modal):
-	def __init__(self, *args, **kwargs) -> None:
-		super().__init__(*args, **kwargs)
-		self.add_item(discord.ui.InputText(label = "クーポンコード", style = discord.InputTextStyle.short))
-
-	async def callback(self, interaction: discord.Interaction):
-		await interaction.response.send_message(self.children[0].value, ephemeral = True)
 
 # ウインドウタイトルの設定
 def title(text):
@@ -127,12 +111,6 @@ async def help(
 
 	await ctx.respond(embed = embed, ephemeral = ephemeral)
 	LOG.debug(GuildInfoDump(ctx.guild_id) + "command:{}, ephemeral:{}".format(command, ephemeral))
-
-# command_buttonコマンドの定義
-@bot.slash_command(description = "コマンド呼び出しボタンを備えたメッセージを送信します", default_member_permissions = discord.permissions.Permissions(manage_guild = True))
-@discord.guild_only()
-async def command_button(ctx):
-	await ctx.respond("test", view = CallCommandButton())
 
 # diceコマンドの定義
 @bot.slash_command(description = "ダイスを振ります（範囲：0～999）")
