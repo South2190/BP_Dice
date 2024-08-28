@@ -42,11 +42,13 @@ class CouponReplyButton(discord.ui.View):
 				color = 0xff0000
 			)
 			await interaction.response.send_message(embed = embed, ephemeral = True)
+			LOG.debug(GuildInfoDump(interaction.guild_id) + "Respond error message(except discord.errors.NotFound)")
 			return
 
 		# メッセージの送信者が削除ボタンを押した時のみ削除
 		if interaction.user.id == refmsg.author.id:
 			await interaction.message.delete()
+			LOG.debug(GuildInfoDump(interaction.guild_id) + "Message deleted.")
 		else:
 			embed = discord.Embed(
 				title = "Error",
@@ -54,6 +56,7 @@ class CouponReplyButton(discord.ui.View):
 				color = 0xff0000
 			)
 			await interaction.response.send_message(embed = embed, ephemeral = True)
+			LOG.debug(GuildInfoDump(interaction.guild_id) + "Respond error message(author not match)")
 
 # ウインドウタイトルの設定
 def title(text):
@@ -153,7 +156,7 @@ async def on_message(message: discord.Message):
 	if message.channel.id not in ChannelList:
 		return
 
-	LOG.debug("CpAutoCalcを呼び出します")
+	LOG.debug(GuildInfoDump(message.guild.id) + "Calling \"CpAutoCalc\".")
 	await message.reply(f"{CpAutoCalc(return_gentext = True)}", view = CouponReplyButton(), mention_author = False, silent = True)
 
 # helpコマンドの定義
@@ -193,7 +196,7 @@ async def cpcalc(
 	hour: Option(int, description = "残り時間数", required = False, default = 0),
 	minute: Option(int, description = "残り分数", required = False, default = 0)
 ):
-	LOG.debug("CpAutoCalcを呼び出します")
+	LOG.debug(GuildInfoDump(ctx.guild_id) + "Calling \"CpAutoCalc\".")
 	text = CpAutoCalc(couponcode, day, hour, minute)
 	# 送信
 	await ctx.respond(text, ephemeral = True)
