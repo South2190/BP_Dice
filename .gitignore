@@ -1,10 +1,12 @@
-# macで生成されるファイル
-.DS_Store
-
 # BotのTOKENが記載されたファイル
 BP_Dice_token.py
+
+# サーバー毎の設定が格納されたファイル
+server-settings.json
 
 # Botが生成したログファイルを格納するディレクトリ
 log/
 
+# その他OS等のシステムが生成するファイル
+.DS_Store
 __pycache__/
