@@ -1,40 +1,6 @@
 {
-    "Version": "1.3.0",
-    "CommitDate": "2024-08-28",
-    "HelpFormat": {
-        "list": {
-            "description": "# 利用可能なスラッシュコマンド一覧",
-            "set_image": "",
-            "add_field": {
-                "/help": "コマンドの使用方法を表示します\ncommand引数を指定するとコマンドの詳細な説明が表示されます",
-                "/dice": "ダイスを振ります（範囲：0～999）",
-                "/cpcalc": "コネクトクーポンの有効期限の日付を計算します"
-            }
-        },
-        "help": {
-            "description": "# /help\n- 各コマンドの使用方法を表示します。\n\n### 利用可能な引数の説明",
-            "set_image": "",
-            "add_field": {
-                "command": "詳細な使用方法を知りたいコマンドを指定します。\n指定なし、もしくは`list`を指定すると利用可能なコマンドの一覧と簡易的な説明が表示されます。",
-                "ephemeral": "値に`False`(無効)を指定するとbotからの返信が他人からも見えるようになります。"
-            }
-        },
-        "dice": {
-            "description": "# /dice\n- ゲーム内の`/dice`コマンドを再現したコマンドです。`ダイス！【xxx】`の書式で`xxx`の部分に0～999の範囲内でランダムな数字を代入して返します。\n\nこのコマンドで利用できる引数はありません。",
-            "set_image": "https://github.com/South2190/BP_Dice/blob/561858e1b5e158ba7c339afe99cd63af5b190fc9/HelpResource/dice.png?raw=true",
-            "add_field": ""
-        },
-        "cpcalc": {
-            "description": "# /cpcalc\n- コネクトクーポンの有効期限の日付を計算します。\n- 有効期限の語尾に出力される**UNIX時間**`( <t:xxxxxxxxxx:R> )`も一緒に送信すると__**Preview**__欄のような見た目になり、**有効期限までの残りの日数がひと目でわかりやすくなります。**\n- 引数`day` `hour` `minute`を指定せずに実行すると、有効期限を**30日後の翌4時として**自動計算します。自動計算させる場合は**__コネクトクーポンを発行した当日以内にコマンドを実行する必要があります。__**\n\n※当日以内とは、ログインボーナスの更新時間を境とした**AM4:00～次の日のAM3:59まで**を指します。\n※コネクトクーポン発行後、コマンドの実行が日付をまたいでしまうと正しい計算結果が出力されません。（例えば、コネクトクーポンをAM3:59以前に発行し、コマンドをAM4:00以降に実行すると実際の有効期限よりも一日遅い日付が出力されてしまいます。この場合は引数`day` `hour` `minute`を指定して実行してください。）\n\n### 利用可能な引数の説明",
-            "set_image": "https://github.com/South2190/BP_Dice/blob/561858e1b5e158ba7c339afe99cd63af5b190fc9/HelpResource/cpcalc.png?raw=true",
-            "add_field": {
-                "couponcode": "クーポンコードを入力します。入力されたクーポンコードを一行目に追記して出力します。",
-                "day": "残り日数を入力します。",
-                "hour": "残り時間数を入力します。",
-                "minute": "残り分数を入力します。"
-            }
-        }
-    },
+    "Version": "2.0.0",
+    "CommitDate": "2025-01-28",
     "LoggingConfigulation": {
         "version": 1,
         "formatters": {
